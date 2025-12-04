@@ -2,1207 +2,775 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Ward Housekeeper Schedule Guide</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Ward Housekeeper – Task List</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <style>
     :root {
-      --bg: #f4f7fb;
-      --card-bg: #ffffff;
-      --morning: #b3e5fc;
-      --midday: #c8e6c9;
-      --evening: #ffe082;
-      --ongoing: #80cbc4;
-      --weekly: #ffab91;
-      --text-main: #123456;
-      --accent: #0072ce;
-      --accent-soft: #e1f0ff;
-      --danger: #c62828;
-      --shadow-soft: 0 4px 10px rgba(0, 0, 0, 0.08);
-      --radius-lg: 18px;
-      --radius-sm: 12px;
-      --transition-fast: 0.18s ease-out;
-      --transition-med: 0.25s ease-out;
+      /* --- Colors: Modern Clinical Palette --- */
+      --primary: #0ea5e9;       /* Sky Blue */
+      --primary-dark: #0284c7;
+      --bg-app: #f8fafc;        /* Slate 50 */
+      --bg-card: #ffffff;
+      --text-main: #0f172a;     /* Slate 900 */
+      --text-muted: #64748b;    /* Slate 500 */
+      --border: #e2e8f0;
+
+      /* Section Accents */
+      --accent-morn: #f59e0b;   /* Amber */
+      --bg-morn: #fffbeb;
+      --accent-noon: #10b981;   /* Emerald */
+      --bg-noon: #ecfdf5;
+      --accent-eve: #6366f1;    /* Indigo */
+      --bg-eve: #eef2ff;
+      --accent-on: #64748b;     /* Slate */
+      --bg-on: #f1f5f9;
+      --accent-wk: #ec4899;     /* Pink */
+      --bg-wk: #fdf2f8;
+
+      /* UI Variables */
+      --radius: 16px;
+      --shadow: 0 4px 6px -1px rgba(0,0,0,0.05), 0 2px 4px -1px rgba(0,0,0,0.03);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
+    * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
 
     body {
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
-        sans-serif;
-      background: radial-gradient(circle at top left, #e3f2fd, #f9f9fb);
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      background-color: var(--bg-app);
       color: var(--text-main);
-      padding: 1.2rem;
-      display: flex;
-      justify-content: center;
+      margin: 0;
+      padding: 0;
+      padding-bottom: 40px;
     }
 
+    /* --- LAYOUT & HEADER --- */
     .app-shell {
-      max-width: 1080px;
-      width: 100%;
-      background: var(--card-bg);
-      border-radius: 24px;
-      box-shadow: 0 18px 35px rgba(0, 0, 0, 0.12);
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-      min-height: 90vh;
+      max-width: 600px; 
+      margin: 0 auto;
+      padding: 16px;
     }
 
     header {
-      padding: 1.8rem 2rem 1rem;
-      background: linear-gradient(120deg, #004f9e, #0072ce);
-      color: white;
-      position: relative;
-    }
-
-    header::after {
-      content: "";
-      position: absolute;
-      inset: auto 0 0;
-      height: 10px;
-      background: linear-gradient(
-        90deg,
-        #b3e5fc,
-        #c8e6c9,
-        #ffe082,
-        #80cbc4,
-        #ffab91
-      );
-      opacity: 0.9;
-    }
-
-    header h1 {
-      font-size: 1.8rem;
-      letter-spacing: 0.03em;
-      margin-bottom: 0.35rem;
-    }
-
-    header p {
-      font-size: 0.95rem;
-      opacity: 0.9;
-    }
-
-    .badge-row {
-      margin-top: 0.75rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.5rem;
-    }
-
-    .badge {
-      font-size: 0.8rem;
-      padding: 0.2rem 0.65rem;
-      border-radius: 999px;
-      border: 1px solid rgba(255, 255, 255, 0.65);
-      background: rgba(255, 255, 255, 0.13);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.3rem;
-    }
-
-    main {
-      padding: 1.4rem 1.7rem 1.6rem;
-      display: grid;
-      grid-template-columns: minmax(0, 3fr) minmax(260px, 1.3fr);
-      gap: 1.3rem;
-    }
-
-    @media (max-width: 860px) {
-      main {
-        grid-template-columns: minmax(0, 1fr);
-        padding: 1.2rem 1.1rem 1.4rem;
-      }
-    }
-
-    /* Left column controls + tasks */
-    .controls {
-      margin-bottom: 0.9rem;
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.6rem;
-      align-items: center;
-    }
-
-    .controls h2 {
-      font-size: 1.1rem;
-      margin-right: 0.5rem;
-    }
-
-    .chip-group {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-    }
-
-    .chip {
-      border-radius: 999px;
-      border: 1px solid #d0d7e2;
-      padding: 0.3rem 0.75rem;
-      font-size: 0.78rem;
-      background: #f3f6fb;
-      cursor: pointer;
-      transition: background var(--transition-fast),
-        transform var(--transition-fast), box-shadow var(--transition-fast),
-        border-color var(--transition-fast), color var(--transition-fast);
-      display: inline-flex;
-      align-items: center;
-      gap: 0.35rem;
-    }
-
-    .chip span.icon {
-      font-size: 0.9rem;
-    }
-
-    .chip.active {
-      background: var(--accent);
-      border-color: var(--accent);
-      color: #ffffff;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.18);
-      transform: translateY(-1px);
-    }
-
-    .chip:hover {
-      transform: translateY(-1px);
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-    }
-
-    .chip:active {
-      transform: translateY(0);
-      box-shadow: none;
-    }
-
-    .view-toggle {
-      margin-left: auto;
-      display: flex;
-      gap: 0.4rem;
-      font-size: 0.78rem;
-      align-items: center;
-    }
-
-    .view-toggle button {
-      border-radius: 999px;
-      border: none;
-      padding: 0.3rem 0.7rem;
-      cursor: pointer;
-      background: #e0ebff;
-      color: #204070;
-      font-size: 0.78rem;
-      transition: background var(--transition-fast),
-        transform var(--transition-fast), box-shadow var(--transition-fast);
-    }
-
-    .view-toggle button.active {
-      background: #ffffff;
-      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.12);
-      transform: translateY(-1px);
-    }
-
-    /* Progress */
-    .progress-card {
-      padding: 0.85rem 1rem;
-      border-radius: var(--radius-lg);
-      background: var(--accent-soft);
-      border: 1px solid #c8d8f7;
-      margin-bottom: 0.9rem;
+      margin-bottom: 12px;
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
-      font-size: 0.85rem;
+      gap: 12px;
     }
 
-    .progress-row {
+    .top-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+    }
+
+    h1 {
+      font-size: 1.35rem;
+      font-weight: 800;
+      margin: 0;
+      color: var(--text-main);
+      letter-spacing: -0.02em;
+    }
+
+    .subtitle {
+      font-size: 0.9rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* --- CONTROLS (View Toggle) --- */
+    .view-toggle {
+      background: #e2e8f0;
+      border-radius: 100px;
+      padding: 4px;
+      display: flex;
+      position: relative;
+      width: fit-content;
+      flex-shrink: 0;
+    }
+
+    .view-btn {
+      border: none;
+      background: none;
+      padding: 6px 16px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      border-radius: 100px;
+      cursor: pointer;
+      z-index: 2;
+      transition: color 0.2s;
+    }
+
+    .view-btn.active { color: var(--text-main); }
+
+    .toggle-slider {
+      position: absolute;
+      top: 4px; left: 4px; bottom: 4px;
+      width: 50%;
+      background: white;
+      border-radius: 100px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+      transition: transform 0.25s cubic-bezier(0.2, 0.8, 0.2, 1);
+      z-index: 1;
+    }
+    
+    .view-toggle[data-state="compact"] .toggle-slider { transform: translateX(0); width: 85px; }
+    .view-toggle[data-state="detailed"] .toggle-slider { transform: translateX(85px); width: 85px; }
+
+    /* --- TOP PROGRESS BAR (SUBTLE) --- */
+    .progress-bar-container {
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 0.7rem;
-      flex-wrap: wrap;
-    }
-
-    .progress-bar-outer {
-      flex: 1;
-      height: 10px;
+      gap: 8px;
+      margin-bottom: 10px;
+      padding: 8px 12px;
       border-radius: 999px;
-      background: #e0e6f2;
-      overflow: hidden;
-    }
-
-    .progress-bar-inner {
-      height: 100%;
-      width: 0%;
-      border-radius: inherit;
-      background: linear-gradient(90deg, #0072ce, #00bfa5);
-      transition: width var(--transition-med);
+      background: rgba(15, 23, 42, 0.02);
+      border: 1px solid rgba(148, 163, 184, 0.25);
     }
 
     .progress-label {
-      min-width: 80px;
-      text-align: right;
-      font-variant-numeric: tabular-nums;
-    }
-
-    /* Task grid */
-    .task-grid {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 0.9rem;
-    }
-
-    .task-card {
-      background: #ffffff;
-      border-radius: var(--radius-lg);
-      box-shadow: var(--shadow-soft);
-      border-top: 4px solid transparent;
-      padding: 0.85rem 0.9rem 0.8rem;
       display: flex;
-      flex-direction: column;
-      gap: 0.4rem;
-      position: relative;
-      overflow: hidden;
-      cursor: pointer;
-      transition: transform var(--transition-fast),
-        box-shadow var(--transition-fast), border-color var(--transition-fast);
-    }
-
-    .task-card:hover {
-      transform: translateY(-3px);
-      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.14);
-    }
-
-    .task-card.morning {
-      border-top-color: var(--morning);
-    }
-
-    .task-card.midday {
-      border-top-color: var(--midday);
-    }
-
-    .task-card.evening {
-      border-top-color: var(--evening);
-    }
-
-    .task-card.ongoing {
-      border-top-color: var(--ongoing);
-    }
-
-    .task-card.weekly {
-      border-top-color: var(--weekly);
-    }
-
-    .task-header {
-      display: flex;
-      gap: 0.45rem;
-      align-items: flex-start;
-    }
-
-    .task-checkbox {
-      position: relative;
-      width: 20px;
-      height: 20px;
-      border-radius: 6px;
-      border: 2px solid #c3cad7;
-      flex-shrink: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #f5f7fc;
-      transition: border var(--transition-fast), background var(--transition-fast),
-        transform var(--transition-fast);
-    }
-
-    .task-checkbox.checked {
-      background: #0072ce;
-      border-color: #00509f;
-      transform: scale(1.02);
-    }
-
-    .task-checkbox span {
-      color: white;
-      font-size: 0.7rem;
-      opacity: 0;
-      transform: scale(0.6);
-      transition: opacity var(--transition-fast), transform var(--transition-fast);
-    }
-
-    .task-checkbox.checked span {
-      opacity: 1;
-      transform: scale(1);
-    }
-
-    .task-title {
-      font-size: 0.92rem;
-      font-weight: 600;
-      letter-spacing: 0.01em;
-    }
-
-    .task-subtitle {
+      align-items: baseline;
+      gap: 4px;
       font-size: 0.78rem;
-      color: #4b5a75;
-      margin-top: 0.05rem;
-    }
-
-    .task-pill-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.35rem;
-      margin-top: 0.25rem;
-    }
-
-    .pill {
-      border-radius: 999px;
-      font-size: 0.7rem;
-      padding: 0.15rem 0.5rem;
-      background: #eef2fb;
-      color: #43506a;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      max-width: 100%;
+      color: var(--text-muted);
       white-space: nowrap;
     }
 
-    .pill span.icon {
-      font-size: 0.85rem;
-    }
-
-    .task-body {
-      font-size: 0.8rem;
-      color: #505b72;
-      margin-top: 0.25rem;
-      line-height: 1.35;
-    }
-
-    .task-footer {
-      margin-top: 0.4rem;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 0.75rem;
-      color: #7a8497;
-    }
-
-    .task-footer span.tag {
+    .prog-text {
+      font-weight: 600;
       text-transform: uppercase;
       letter-spacing: 0.06em;
-      font-weight: 600;
-    }
-
-    .task-footer span.badge-soft {
-      padding: 0.12rem 0.4rem;
-      border-radius: 999px;
-      background: #f4f6fb;
-    }
-
-    /* Right column: timeline + fun corner */
-    .side-panel {
-      display: flex;
-      flex-direction: column;
-      gap: 0.9rem;
-    }
-
-    .panel {
-      border-radius: var(--radius-lg);
-      padding: 0.9rem 1rem;
-      background: #f4f7fb;
-      border: 1px solid #dde4f1;
-      box-shadow: 0 5px 12px rgba(0, 0, 0, 0.05);
-      font-size: 0.8rem;
-    }
-
-    .panel h3 {
-      font-size: 0.95rem;
-      margin-bottom: 0.45rem;
-    }
-
-    .timeline {
-      display: flex;
-      flex-direction: column;
-      gap: 0.7rem;
-    }
-
-    .timeline-item {
-      display: grid;
-      grid-template-columns: 70px minmax(0, 1fr);
-      gap: 0.6rem;
-      align-items: center;
-    }
-
-    .timeline-time {
-      font-size: 0.78rem;
-      font-weight: 600;
-      color: #334567;
-    }
-
-    .timeline-chip {
-      padding: 0.25rem 0.55rem;
-      border-radius: 999px;
       font-size: 0.7rem;
-      display: inline-flex;
-      align-items: center;
-      gap: 0.25rem;
-      background: #ffffff;
-      border: 1px dashed #cbd4e2;
     }
 
-    .timeline-chip span.dot {
-      width: 7px;
-      height: 7px;
+    .prog-count {
+      font-weight: 600;
+      color: var(--text-main);
+    }
+
+    .progress-bar-track {
+      position: relative;
+      flex: 1;
+      height: 4px;
       border-radius: 999px;
-      display: inline-block;
+      background: #e2e8f0;
+      overflow: hidden;
     }
 
-    .timeline-chip.morning span.dot {
-      background: var(--morning);
-    }
-    .timeline-chip.midday span.dot {
-      background: var(--midday);
-    }
-    .timeline-chip.evening span.dot {
-      background: var(--evening);
-    }
-
-    .panel-footer-note {
-      margin-top: 0.45rem;
-      font-size: 0.72rem;
-      color: #707b90;
+    .prog-bar-fill {
+      position: absolute;
+      left: 0;
+      top: 0;
+      bottom: 0;
+      width: 0%;
+      background: var(--primary);
+      transition: width 0.3s ease;
     }
 
-    .fun-panel p {
-      margin-bottom: 0.4rem;
-    }
-
-    .fun-emoji {
-      font-size: 1.4rem;
-      margin-right: 0.2rem;
-    }
-
-    .fun-button-row {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      margin-top: 0.3rem;
-    }
-
-    .fun-btn {
-      font-size: 0.75rem;
+    .progress-reset-btn {
+      border: none;
+      background: transparent;
+      padding: 4px;
       border-radius: 999px;
-      border: 1px solid #d0d7e5;
-      padding: 0.25rem 0.55rem;
-      background: #ffffff;
       cursor: pointer;
-      transition: background var(--transition-fast),
-        transform var(--transition-fast), box-shadow var(--transition-fast);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--text-muted);
+      flex-shrink: 0;
     }
 
-    .fun-btn:hover {
-      background: #edf3ff;
-      transform: translateY(-1px);
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.12);
+    .progress-reset-btn:hover {
+      background: rgba(148, 163, 184, 0.16);
+      color: var(--text-main);
     }
 
-    .small-muted {
-      font-size: 0.7rem;
-      color: #7b8496;
-      margin-top: 0.4rem;
+    .progress-reset-btn svg {
+      width: 16px;
+      height: 16px;
     }
 
-    footer {
-      padding: 0.5rem 1.7rem 1rem;
-      font-size: 0.7rem;
-      color: #6c7585;
+    /* --- FILTERS (Horizontal Scroll) --- */
+    .filters-wrapper {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(248, 250, 252, 0.96);
+      backdrop-filter: blur(8px);
+      margin: 0 -16px;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(0,0,0,0.05);
+    }
+
+    .filter-scroll {
+      display: flex;
+      gap: 10px;
+      overflow-x: auto;
+      padding: 0 16px 8px 16px;
+      scrollbar-width: none;
+    }
+    .filter-scroll::-webkit-scrollbar { display: none; }
+
+    .filter-btn {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      padding: 8px 16px;
+      border-radius: 100px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      white-space: nowrap;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.2s;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      flex-shrink: 0;
+    }
+
+    .filter-btn svg { width: 16px; height: 16px; }
+
+    .filter-btn.active {
+      background: var(--text-main);
+      color: white;
+      border-color: var(--text-main);
+    }
+    .filter-btn.active svg { stroke: white; }
+
+    /* --- TASK CARDS --- */
+    .task-list {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 16px;
+    }
+
+    .task-card {
+      background: var(--bg-card);
+      border-radius: var(--radius);
+      padding: 16px;
+      box-shadow: var(--shadow);
+      display: flex;
+      gap: 14px;
+      transition: transform 0.15s ease;
+      cursor: pointer;
+      border-left: 4px solid transparent;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .task-card:active { transform: scale(0.98); }
+
+    .task-card[data-sec="morning"] { border-left-color: var(--accent-morn); }
+    .task-card[data-sec="midday"] { border-left-color: var(--accent-noon); }
+    .task-card[data-sec="evening"] { border-left-color: var(--accent-eve); }
+    .task-card[data-sec="ongoing"] { border-left-color: var(--accent-on); }
+    .task-card[data-sec="weekly"] { border-left-color: var(--accent-wk); }
+
+    .check-circle {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      border: 2px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: all 0.2s;
+      color: white;
+      margin-top: 2px;
+    }
+    
+    .task-card.done .check-circle {
+      background: var(--primary);
+      border-color: var(--primary);
+    }
+
+    .card-content { flex: 1; }
+
+    .card-header {
       display: flex;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 0.4rem;
-      background: #f5f7fc;
-      border-top: 1px solid #dde3f0;
+      align-items: flex-start;
+      margin-bottom: 4px;
+      gap: 10px;
     }
+
+    .card-title {
+      font-size: 1rem;
+      font-weight: 600;
+      line-height: 1.35;
+      margin-right: 8px;
+      color: var(--text-main);
+    }
+
+    .task-card.done .card-title {
+      text-decoration: line-through;
+      color: var(--text-muted);
+    }
+
+    .time-badge {
+      font-size: 0.75rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      background: #f1f5f9;
+      padding: 4px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .task-card.compact .card-desc,
+    .task-card.compact .card-tags {
+      display: none;
+    }
+    
+    .card-desc {
+      font-size: 0.9rem;
+      color: #475569;
+      line-height: 1.5;
+      margin-top: 8px;
+      margin-bottom: 12px;
+    }
+
+    .card-tags {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.02em;
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    
+    .task-card[data-sec="morning"] .tag { background: var(--bg-morn); color: var(--accent-morn); }
+    .task-card[data-sec="midday"] .tag { background: var(--bg-noon); color: var(--accent-noon); }
+    .task-card[data-sec="evening"] .tag { background: var(--bg-eve); color: var(--accent-eve); }
+    .task-card[data-sec="ongoing"] .tag { background: var(--bg-on); color: var(--accent-on); }
+    .task-card[data-sec="weekly"] .tag { background: var(--bg-wk); color: var(--accent-wk); }
+
   </style>
 </head>
 <body>
+
   <div class="app-shell">
+    
     <header>
-      <h1>Ward Housekeeper Schedule Guide</h1>
-      <p>
-        Tap a time block or task card as you work through your shift. Your
-        progress is saved on this device.
-      </p>
-      <div class="badge-row">
-        <span class="badge">⏱ Approx. 07:00 a.m. – End of shift</span>
-        <span class="badge">🍽 Breakfast · Lunch · Supper</span>
-        <span class="badge">🧼 Pantry · PPE · Ordering</span>
+      <div class="top-bar">
+        <div>
+          <h1>Ward Housekeeper – Task List</h1>
+          <div class="subtitle">Daily schedule, ongoing and weekly tasks</div>
+        </div>
+        
+        <div class="view-toggle" id="viewToggle" data-state="detailed">
+          <div class="toggle-slider"></div>
+          <button class="view-btn" onclick="setView('compact')">Compact</button>
+          <button class="view-btn" onclick="setView('detailed')">Detailed</button>
+        </div>
       </div>
     </header>
 
-    <main>
-      <!-- LEFT: FILTERS + TASKS -->
-      <section>
-        <div class="controls">
-          <h2>Shift section:</h2>
-          <div class="chip-group" id="sectionFilters">
-            <button class="chip active" data-section="all">
-              <span class="icon">⭐</span>All
-            </button>
-            <button class="chip" data-section="morning">
-              <span class="icon">🌅</span>Morning
-            </button>
-            <button class="chip" data-section="midday">
-              <span class="icon">☀️</span>Mid-day
-            </button>
-            <button class="chip" data-section="evening">
-              <span class="icon">🌇</span>Afternoon &amp; Supper
-            </button>
-            <button class="chip" data-section="ongoing">
-              <span class="icon">♻️</span>Ongoing
-            </button>
-            <button class="chip" data-section="weekly">
-              <span class="icon">📅</span>Weekly
-            </button>
-          </div>
+    <div class="progress-bar-container">
+      <div class="progress-label">
+        <span class="prog-text">PROGRESS</span>
+        <span class="prog-count" id="progCount">0/0</span>
+      </div>
+      <div class="progress-bar-track">
+        <div class="prog-bar-fill" id="progFill"></div>
+      </div>
+      <button class="progress-reset-btn" onclick="resetApp()" aria-label="Reset progress">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
+          <path d="M3 3v5h5"/>
+        </svg>
+      </button>
+    </div>
 
-          <div class="view-toggle" aria-label="Toggle card detail level">
-            <span>View:</span>
-            <button id="viewSummary" class="active">Compact</button>
-            <button id="viewDetail">Detailed</button>
-          </div>
-        </div>
+    <div class="filters-wrapper">
+      <div class="filter-scroll" id="filterContainer"></div>
+    </div>
 
-        <div class="progress-card" aria-live="polite">
-          <div class="progress-row">
-            <div>
-              <strong>Section progress</strong>
-            </div>
-            <div class="progress-label">
-              <span id="progressCount">0 / 0</span>
-            </div>
-          </div>
-          <div class="progress-bar-outer" aria-hidden="true">
-            <div class="progress-bar-inner" id="progressBar"></div>
-          </div>
-          <div class="small-muted">
-            Tip: ticking tasks marks them as done for today. Use the
-            <strong>Reset</strong> button in the fun corner to clear everything.
-          </div>
-        </div>
+    <div class="task-list" id="taskList"></div>
 
-        <div class="task-grid" id="taskGrid"></div>
-      </section>
-
-      <!-- RIGHT: TIMELINE + FUN CORNER -->
-      <aside class="side-panel">
-        <div class="panel">
-          <h3>Timeline overview</h3>
-          <div class="timeline">
-            <div class="timeline-item">
-              <div class="timeline-time">07:00</div>
-              <div class="timeline-chip morning">
-                <span class="dot"></span> Breakfast &amp; fridge checks
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-time">09:00</div>
-              <div class="timeline-chip morning">
-                <span class="dot"></span> Bread &amp; milk stock / menus
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-time">10:30</div>
-              <div class="timeline-chip morning">
-                <span class="dot"></span> Tea round &amp; trolley
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-time">12:30</div>
-              <div class="timeline-chip midday">
-                <span class="dot"></span> Lunch service &amp; trays
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-time">15:00</div>
-              <div class="timeline-chip midday">
-                <span class="dot"></span> Afternoon tea &amp; PPE
-              </div>
-            </div>
-            <div class="timeline-item">
-              <div class="timeline-time">17:30</div>
-              <div class="timeline-chip evening">
-                <span class="dot"></span> Supper &amp; late tea round
-              </div>
-            </div>
-          </div>
-          <p class="panel-footer-note">
-            Use this as a quick “mental map” of your day. Cards below give the
-            detail.
-          </p>
-        </div>
-
-        <div class="panel fun-panel">
-          <h3>Fun corner</h3>
-          <p>
-            <span class="fun-emoji" aria-hidden="true">🎯</span>
-            <strong id="funPromptTitle">Quick challenge</strong>
-          </p>
-          <p id="funPromptText">
-            Tick off all Morning tasks before 10:30 a.m. Can you get them all
-            green?
-          </p>
-          <div class="fun-button-row">
-            <button class="fun-btn" id="shufflePrompt">New challenge</button>
-            <button class="fun-btn" id="resetProgress">
-              Reset all ticks
-            </button>
-          </div>
-          <p class="small-muted">
-            Challenges are just for fun – they don’t change the official
-            schedule.
-          </p>
-        </div>
-      </aside>
-    </main>
-
-    <footer>
-      <span>Made from the Ward Housekeeper schedule &amp; task list.</span>
-      <span>Progress is stored locally in this browser only.</span>
-    </footer>
   </div>
 
   <script>
-    // --- DATA -------------------------------------------------------------
+    const ICONS = {
+      all: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />',
+      morning: '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="4"/>',
+      midday: '<circle cx="12" cy="12" r="5"/><path d="M12 1v2"/><path d="M12 21v2"/><path d="M4.22 4.22l1.42 1.42"/><path d="M18.36 18.36l1.42 1.42"/><path d="M1 12h2"/><path d="M21 12h2"/><path d="M4.22 19.78l1.42-1.42"/><path d="M18.36 5.64l1.42-1.42"/>',
+      evening: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
+      ongoing: '<path d="M21.5 2v6h-6M21.34 5.5A10 10 0 1 1 11.26 2.75"/>',
+      weekly: '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
+      check: '<polyline points="20 6 9 17 4 12"/>'
+    };
+
+    function getIcon(name) {
+      return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ICONS.all}</svg>`;
+    }
+
     const tasks = [
       // MORNING
       {
-        id: "serve_breakfast",
-        section: "morning",
-        title: "Serve breakfast",
+        id: "m1",
+        sec: "morning",
+        title: "Serve Breakfast",
         time: "07:00–09:00",
-        approx: "Approx. 07:00–09:00 a.m.",
-        description:
-          "Serve breakfast trays, help patients with menus and dietary needs, and note any issues.",
-        tag: "Breakfast"
+        desc: "Serve breakfast trays to patients, assisting as needed and ensuring all patients are offered their meal.",
+        tag: "Meals"
       },
       {
-        id: "fridge_freezer_check",
-        section: "morning",
-        title: "Fridge & freezer temp check",
-        time: "Around 08:00",
-        approx: "Fridge & freezer once this morning.",
-        description:
-          "Check and record temperatures for ward fridges and the freezer (Fridge < 5°C / Freezer < -18°C).",
+        id: "m2",
+        sec: "morning",
+        title: "Fridge & Freezer Temperatures",
+        time: "Morning & afternoon",
+        desc: "Check and record fridge and freezer temperatures twice daily. Fridges must be below 5°C and freezers below −18°C; escalate any out-of-range readings.",
         tag: "Food safety"
       },
       {
-        id: "bread_milk_stock",
-        section: "morning",
-        title: "Check bread & milk levels",
-        time: "By 09:00",
-        approx: "Bread orders before 09:00; milk before 14:00.",
-        description:
-          "Check bread, milk, juices and other breakfast items. Order or cancel items via Helpdesk if needed.",
-        tag: "Stock check"
+        id: "m3",
+        sec: "morning",
+        title: "Menus for Bed Moves & Admissions",
+        time: "By 09:30 & 13:30",
+        desc: "Check menus on the tablet for bed moves and new admissions. Ensure menus are completed and uploaded before 09:30 a.m. for lunch and 1:30 p.m. for supper.",
+        tag: "Menus"
       },
       {
-        id: "tablet_menus_lunch",
-        section: "morning",
-        title: "Complete & upload lunch menus",
-        time: "By 09:30",
-        approx: "Ensure all lunch menus are on the tablet.",
-        description:
-          "Visit each patient, confirm their lunch choice and ensure menus are completed and uploaded on the tablet.",
-        tag: "Tablet menus"
+        id: "m4",
+        sec: "morning",
+        title: "Stock Checks & Helpdesk Orders",
+        time: "09:00 & 14:00",
+        desc: "Check bread, milk, juices and other staples. Order bread by 09:00 and milk by 14:00 via the helpdesk (5555) for orders or cancellations.",
+        tag: "Ordering"
       },
       {
-        id: "wash_breakfast_dishes",
-        section: "morning",
-        title: "Collect & wash breakfast dishes",
-        time: "After breakfast",
-        approx: "Once breakfast is finished.",
-        description:
-          "Collect all breakfast trays and dishes, run the dishwasher and leave the area clean.",
-        tag: "Pantry"
+        id: "m5",
+        sec: "morning",
+        title: "Collect Breakfast Dishes & Wash Up",
+        time: "Post-breakfast",
+        desc: "Collect all breakfast dishes, clear tables and load the dishwasher so equipment is washed and ready for the next meal service.",
+        tag: "Hygiene"
       },
       {
-        id: "tea_round_morning",
-        section: "morning",
-        title: "Morning tea round",
-        time: "Around 10:30",
-        approx: "Approx. 10:30 a.m.",
-        description:
-          "Complete the morning tea round, offering hot drinks and water top-ups to patients.",
+        id: "m6",
+        sec: "morning",
+        title: "Rotate Food & Supplements (Fridge)",
+        time: "Morning",
+        desc: "Check expiry dates on patient food and nutritional supplements in the fridge. Rotate stock using FIFO (First In, First Out) and remove any out-of-date items.",
+        tag: "Stock rotation"
+      },
+      {
+        id: "m7",
+        sec: "morning",
+        title: "Clean Pantry Appliances & Storage",
+        time: "Morning",
+        desc: "Clean inside cupboards, the microwave, fridges and the freezer, keeping the ward pantry clean and compliant with food safety guidance.",
+        tag: "Cleaning"
+      },
+      {
+        id: "m8",
+        sec: "morning",
+        title: "Restock Tea & Breakfast Trolley",
+        time: "Morning",
+        desc: "Restock the tea and breakfast trolley with drinks, crockery and consumables so it is ready for use.",
+        tag: "Restock"
+      },
+      {
+        id: "m9",
+        sec: "morning",
+        title: "Morning Tea Round",
+        time: "10:30",
+        desc: "Complete the 10:30 a.m. tea round, offering hot drinks and refreshments to patients.",
         tag: "Drinks"
       },
       {
-        id: "restock_tea_trolley",
-        section: "morning",
-        title: "Restock tea/breakfast trolley",
+        id: "m10",
+        sec: "morning",
+        title: "Restock Nurse & IV Stations",
         time: "Morning",
-        approx: "After tea round or as needed.",
-        description:
-          "Top up tea, coffee, sugar, milk, cups and other items so the trolley is ready for the next round.",
-        tag: "Trolley"
+        desc: "Restock nurse station and IV station with required items and check sharps bins, replacing them if they are approaching the fill line.",
+        tag: "Stations & sharps"
       },
       {
-        id: "nurse_station_iv_stock",
-        section: "morning",
-        title: "Restock nurse & IV station",
-        time: "Late morning",
-        approx: "Before lunch where possible.",
-        description:
-          "Check the nurse station and IV station supplies and restock required consumables.",
-        tag: "Ward stock"
-      },
-      {
-        id: "prepare_lunch_trays",
-        section: "morning",
-        title: "Prepare lunch trays",
-        time: "Before 12:30",
-        approx: "Just before lunch arrives.",
-        description:
-          "Set up trays, cutlery and napkins ready for lunch service.",
-        tag: "Lunch prep"
+        id: "m11",
+        sec: "morning",
+        title: "Start Visiting Patients for Next-Day Menus",
+        time: "Morning",
+        desc: "Begin visiting each patient to record their lunch and supper choices for the following day on the tablet, making sure that all dietary requirements for each patient are observed throughout the menus.",
+        tag: "Menus"
       },
 
       // MIDDAY
       {
-        id: "assist_lunch",
-        section: "midday",
-        title: "Assist with lunch service",
-        time: "12:30–13:30",
-        approx: "Approx. 12:30 p.m.",
-        description:
-          "Help Catering serve lunch, ensure patients receive the correct meals and assist where needed.",
-        tag: "Lunch"
+        id: "d1",
+        sec: "midday",
+        title: "Prepare Trays for Lunch",
+        time: "Before 12:30",
+        desc: "Prepare trays and set up for the lunch service so that meals can be delivered promptly and safely.",
+        tag: "Prep"
       },
       {
-        id: "collect_lunch_trays",
-        section: "midday",
-        title: "Collect lunch trays",
-        time: "After lunch",
-        approx: "Once patients are finished.",
-        description:
-          "Collect all lunch trays and return them for washing, leaving over-bed tables clear.",
-        tag: "Clear up"
+        id: "d2",
+        sec: "midday",
+        title: "Assist with Lunch Service",
+        time: "12:30",
+        desc: "Assist with serving lunch at 12:30 p.m., ensuring patients receive the correct meals and any assistance required.",
+        tag: "Meals"
       },
       {
-        id: "afternoon_tea_round",
-        section: "midday",
-        title: "Afternoon tea round",
-        time: "Mid-afternoon",
-        approx: "After lunch trays have gone.",
-        description:
-          "Offer hot drinks and water to patients during the afternoon.",
+        id: "d3",
+        sec: "midday",
+        title: "Collect Lunch Trays",
+        time: "Post-lunch",
+        desc: "Collect all lunch trays after the meal and send them back to the kitchen for washing, leaving bedside tables clean and clear.",
+        tag: "Hygiene"
+      },
+      {
+        id: "d4",
+        sec: "midday",
+        title: "Afternoon Tea Round",
+        time: "Afternoon",
+        desc: "Carry out the afternoon tea round, offering hot drinks and refreshments to patients.",
         tag: "Drinks"
       },
       {
-        id: "restock_ppe_wipes",
-        section: "midday",
-        title: "Restock PPE & Clinell wipes",
+        id: "d5",
+        sec: "midday",
+        title: "Restock PPE & Clinell Wipes",
         time: "Afternoon",
-        approx: "Top-ups during the day.",
-        description:
-          "Ensure gloves, aprons, masks and Clinell wipes are fully stocked throughout the ward and in all rooms.",
-        tag: "Infection control"
+        desc: "Restock PPE and consumables as required, including gloves, aprons and masks in all rooms, and ensure Clinell wipes are fully stocked throughout the ward.",
+        tag: "PPE & wipes"
       },
       {
-        id: "collect_next_day_menus",
-        section: "midday",
-        title: "Check next-day menus (lunch & supper)",
-        time: "By 13:30 for supper menus",
-        approx: "Menus completed & uploaded.",
-        description:
-          "Visit each patient to complete or confirm next-day lunch and supper menus on the tablet.",
-        tag: "Tablet menus"
+        id: "d6",
+        sec: "midday",
+        title: "Ariba Ordering (Supplies)",
+        time: "As required",
+        desc: "Check if any orders are needed from Ariba when stock is low (e.g. bowls, cutlery, small plates, paper roll, Heinz soups, sugar, blue cups and other supplies) and place orders as required.",
+        tag: "Ordering"
+      },
+      {
+        id: "d7",
+        sec: "midday",
+        title: "Same-Day Supper Menus on Tablet",
+        time: "By 13:30",
+        desc: "Ensure that all patients have their supper choices for the same day recorded on the tablet. Confirm that all supper menus are completed and uploaded by 1:30 p.m.",
+        tag: "Menus"
       },
 
       // EVENING
       {
-        id: "assist_supper",
-        section: "evening",
-        title: "Assist with supper service",
-        time: "17:30–18:30",
-        approx: "Approx. 17:30 p.m.",
-        description:
-          "Deliver supper trays provided by Catering and make sure each patient has the correct meal.",
-        tag: "Supper"
+        id: "e1",
+        sec: "evening",
+        title: "Assist with Supper Service",
+        time: "17:30",
+        desc: "Assist with the supper service at 5:30 p.m. by delivering trays provided by Catering and ensuring patients receive the correct meals.",
+        tag: "Meals"
       },
       {
-        id: "collect_supper_trays",
-        section: "evening",
-        title: "Collect supper trays",
-        time: "After supper",
-        approx: "Once patients are finished.",
-        description:
-          "Collect all supper trays and return them, leaving patient areas clear.",
-        tag: "Clear up"
+        id: "e2",
+        sec: "evening",
+        title: "Collect Supper Trays",
+        time: "Post-supper",
+        desc: "Collect all supper trays after the meal, send them back for washing and clear bedside tables.",
+        tag: "Hygiene"
       },
       {
-        id: "late_tea_round",
-        section: "evening",
-        title: "Late tea round",
+        id: "e3",
+        sec: "evening",
+        title: "Late Tea Round",
         time: "Evening",
-        approx: "After supper trays.",
-        description:
-          "Offer final hot drinks and water to patients before the end of the shift.",
+        desc: "Complete the late tea round, offering drinks and refreshments to patients in the evening.",
         tag: "Drinks"
       },
       {
-        id: "prepare_trolleys_next_day",
-        section: "evening",
-        title: "Prepare breakfast & tea trolleys for next day",
+        id: "e4",
+        sec: "evening",
+        title: "Prepare Trolleys for Next Morning",
         time: "End of shift",
-        approx: "Before handover.",
-        description:
-          "Clean and restock the breakfast and tea trolleys so they are ready for the next morning.",
-        tag: "Next day"
+        desc: "Clean and restock the tea trolley and breakfast trolley so they are fully prepared for the following morning.",
+        tag: "Prep"
       },
 
       // ONGOING
       {
-        id: "drinks_water_topups",
-        section: "ongoing",
-        title: "Drinks & fresh water",
+        id: "o1",
+        sec: "ongoing",
+        title: "Drinks on Request",
         time: "All day",
-        approx: "Throughout the shift.",
-        description:
-          "Provide extra drinks on request and ensure fresh water jugs are available and topped up.",
+        desc: "Provide additional drinks on request throughout the day, responding promptly to patient hydration needs.",
         tag: "Hydration"
       },
       {
-        id: "pantry_clean_dated",
-        section: "ongoing",
-        title: "Pantry clean & date checks",
+        id: "o2",
+        sec: "ongoing",
+        title: "Fresh Water & Jugs",
         time: "All day",
-        approx: "Little & often.",
-        description:
-          "Keep the pantry tidy; ensure opened items are dated and dispose of expired or undated food.",
-        tag: "Pantry"
+        desc: "Ensure fresh drinking water and clean jugs are available throughout the ward, checking and replenishing regularly.",
+        tag: "Hydration"
       },
       {
-        id: "ariba_ordering",
-        section: "ongoing",
-        title: "Ariba ordering (if needed)",
-        time: "When required",
-        approx: "Check during the day.",
-        description:
-          "Check stock of bowls, cutlery, plates, paper roll, soups, sugar, blue cups and order via Ariba when needed.",
-        tag: "Ordering"
-      },
-      {
-        id: "clean_cupboards_microwave_fridge",
-        section: "ongoing",
-        title: "Clean cupboards, microwave, fridge & freezer",
-        time: "When suitable",
-        approx: "Avoid busy service times.",
-        description:
-          "Wipe down internal surfaces of cupboards, microwave and cold storage to maintain hygiene.",
-        tag: "Cleaning"
-      },
-      {
-        id: "dishwasher_drain_refill",
-        section: "ongoing",
-        title: "Dishwasher drain & refill",
-        time: "Start & end of shift",
-        approx: "At least twice daily.",
-        description:
-          "Drain and refill the dishwasher water, checking detergent, sanitiser and salt levels; clean the filter.",
-        tag: "Dishwasher"
-      },
-      {
-        id: "keep_kitchen_clean",
-        section: "ongoing",
-        title: "Keep kitchen / pantry clean",
+        id: "o3",
+        sec: "ongoing",
+        title: "Pantry Cleanliness & Food Dating",
         time: "All day",
-        approx: "Little jobs between rounds.",
-        description:
-          "Wipe surfaces, remove rubbish and keep the area safe and tidy as you go.",
-        tag: "Housekeeping"
+        desc: "Maintain cleanliness of the ward pantry. Ensure all opened items are correctly dated and discard any expired, undated or open food in line with food safety guidance.",
+        tag: "Food safety"
       },
       {
-        id: "rotate_food_fifo",
-        section: "ongoing",
-        title: "Rotate food using FIFO",
+        id: "o4",
+        sec: "ongoing",
+        title: "Stock Rotation & Expiry Checks",
         time: "All day",
-        approx: "When handling food items.",
-        description:
-          "Check expiry dates, rotate stock using First In, First Out and remove out-of-date supplements or food.",
+        desc: "Check expiry dates and rotate all ward food items and nutritional supplements using FIFO (First In, First Out), removing anything out of date.",
         tag: "Stock rotation"
+      },
+      {
+        id: "o5",
+        sec: "ongoing",
+        title: "Dishwasher Maintenance",
+        time: "Start & end of shift",
+        desc: "At the start and end of the shift drain and refill the dishwasher water. Check detergent, sanitiser and salt levels and clean the filter daily.",
+        tag: "Equipment"
       },
 
       // WEEKLY
       {
-        id: "patient_boards_leaflets",
-        section: "weekly",
-        title: "Patient boards & leaflets tidy",
+        id: "w1",
+        sec: "weekly",
+        title: "Clean Mobile Equipment",
         time: "Weekly",
-        approx: "Once per week.",
-        description:
-          "Check patient information boards and leaflet holders, tidy and remove out-of-date materials.",
-        tag: "Patient info"
+        desc: "Carry out weekly cleaning of mobile equipment including drip stands, mobile computers, phones, drip trolleys and folder trolleys.",
+        tag: "Weekly clean"
       },
       {
-        id: "clean_mobile_equipment",
-        section: "weekly",
-        title: "Clean mobile equipment",
+        id: "w2",
+        sec: "weekly",
+        title: "Patient Boards & Leaflet Holders",
         time: "Weekly",
-        approx: "Once per week.",
-        description:
-          "Clean drip stands, mobile computers, phones, drip trolleys and folder trolleys according to guidance.",
-        tag: "Equipment"
+        desc: "Check and tidy patient information boards and leaflet holders weekly, removing outdated materials and tidying or restocking as needed.",
+        tag: "Information"
       },
       {
-        id: "flush_taps_logbook",
-        section: "weekly",
-        title: "Flush taps & update logbook",
-        time: "Twice weekly",
-        approx: "e.g. Tuesdays & Saturdays.",
-        description:
-          "Flush all ward taps, including patient rooms and wall-mounted sinks, and record each flush in the logbook.",
+        id: "w3",
+        sec: "weekly",
+        title: "Tap Flushing & Recording",
+        time: "Tue & Sat",
+        desc: "On Tuesdays and Saturdays flush all ward taps, including patient room sinks, shower taps and wall-mounted sinks, and record each flush in the housekeeper schedule folder.",
         tag: "Water safety"
       }
     ];
 
-    const funPrompts = [
-      {
-        title: "Quick challenge",
-        text: "Tick off every Morning task before you sit down for your own tea break."
-      },
-      {
-        title: "Hydration hero",
-        text: "Each time you top up a water jug, tick a task and see how fast the bar fills up."
-      },
-      {
-        title: "Pantry perfection",
-        text: "Can you keep the pantry spotless all shift? Use the Ongoing cards as a mini checklist."
-      },
-      {
-        title: "Weekly wizard",
-        text: "Pick one Weekly task and make it your mission to get it done before handover."
-      },
-      {
-        title: "Tablet pro",
-        text: "Try to complete all menu-related tasks with no missed beds today."
-      }
+    const SECTIONS = [
+      { id: 'all', label: 'All', icon: 'all' },
+      { id: 'morning', label: 'Morning', icon: 'morning' },
+      { id: 'midday', label: 'Midday', icon: 'midday' },
+      { id: 'evening', label: 'Evening', icon: 'evening' },
+      { id: 'ongoing', label: 'Ongoing', icon: 'ongoing' },
+      { id: 'weekly', label: 'Weekly', icon: 'weekly' }
     ];
 
-    const STORAGE_KEY = "ward_housekeeper_tasks_v1";
+    let state = {
+      completed: JSON.parse(localStorage.getItem('ward_tasks_clean_v3') || '{}'),
+      viewMode: localStorage.getItem('ward_view_mode') || 'detailed',
+      filter: 'all'
+    };
 
-    // --- STATE ------------------------------------------------------------
-    let completed = loadCompleted();
-    let activeSection = "all";
-    let compactView = true;
-
-    // --- DOM REFS ---------------------------------------------------------
-    const taskGrid = document.getElementById("taskGrid");
-    const sectionFilters = document.getElementById("sectionFilters");
-    const progressBar = document.getElementById("progressBar");
-    const progressCount = document.getElementById("progressCount");
-    const viewSummaryBtn = document.getElementById("viewSummary");
-    const viewDetailBtn = document.getElementById("viewDetail");
-    const funPromptTitle = document.getElementById("funPromptTitle");
-    const funPromptText = document.getElementById("funPromptText");
-    const shufflePromptBtn = document.getElementById("shufflePrompt");
-    const resetProgressBtn = document.getElementById("resetProgress");
-
-    // --- INITIAL RENDER ---------------------------------------------------
-    renderTasks();
-    updateProgress();
-    pickRandomPrompt();
-
-    // --- EVENT HANDLERS ---------------------------------------------------
-    sectionFilters.addEventListener("click", (e) => {
-      const chip = e.target.closest(".chip");
-      if (!chip) return;
-      document
-        .querySelectorAll("#sectionFilters .chip")
-        .forEach((c) => c.classList.remove("active"));
-      chip.classList.add("active");
-      activeSection = chip.getAttribute("data-section");
+    function init() {
+      renderFilters();
+      updateUI();
       renderTasks();
-      updateProgress();
-    });
+    }
 
-    viewSummaryBtn.addEventListener("click", () => {
-      compactView = true;
-      viewSummaryBtn.classList.add("active");
-      viewDetailBtn.classList.remove("active");
-      document.body.classList.add("compact-view");
-      renderTasks();
-    });
+    function renderFilters() {
+      const container = document.getElementById('filterContainer');
+      container.innerHTML = SECTIONS.map(s => `
+        <button class="filter-btn ${state.filter === s.id ? 'active' : ''}" 
+                onclick="setFilter('${s.id}')">
+          ${getIcon(s.icon)} ${s.label}
+        </button>
+      `).join('');
+    }
 
-    viewDetailBtn.addEventListener("click", () => {
-      compactView = false;
-      viewDetailBtn.classList.add("active");
-      viewSummaryBtn.classList.remove("active");
-      document.body.classList.remove("compact-view");
-      renderTasks();
-    });
-
-    shufflePromptBtn.addEventListener("click", pickRandomPrompt);
-
-    resetProgressBtn.addEventListener("click", () => {
-      if (
-        !confirm(
-          "Reset all ticks for every task on this device? This cannot be undone."
-        )
-      )
-        return;
-      completed = {};
-      saveCompleted();
-      renderTasks();
-      updateProgress();
-    });
-
-    // --- FUNCTIONS --------------------------------------------------------
     function renderTasks() {
-      taskGrid.innerHTML = "";
-      const filtered = tasks.filter(
-        (t) => activeSection === "all" || t.section === activeSection
-      );
-
-      filtered.forEach((task) => {
-        const card = document.createElement("article");
-        card.className = `task-card ${task.section}`;
-        card.setAttribute("data-id", task.id);
-
-        const header = document.createElement("div");
-        header.className = "task-header";
-
-        const checkbox = document.createElement("div");
-        checkbox.className = "task-checkbox";
-        checkbox.innerHTML = "<span>✓</span>";
-        if (completed[task.id]) checkbox.classList.add("checked");
-
-        const titleWrap = document.createElement("div");
-        const title = document.createElement("div");
-        title.className = "task-title";
-        title.textContent = task.title;
-
-        const subtitle = document.createElement("div");
-        subtitle.className = "task-subtitle";
-        subtitle.textContent = task.approx;
-
-        titleWrap.appendChild(title);
-        titleWrap.appendChild(subtitle);
-
-        header.appendChild(checkbox);
-        header.appendChild(titleWrap);
-
-        const pillRow = document.createElement("div");
-        pillRow.className = "task-pill-row";
-
-        if (task.time) {
-          const timePill = document.createElement("span");
-          timePill.className = "pill";
-          timePill.innerHTML = `<span class="icon">⏰</span>${task.time}`;
-          pillRow.appendChild(timePill);
-        }
-
-        if (task.tag) {
-          const tagPill = document.createElement("span");
-          tagPill.className = "pill";
-          tagPill.innerHTML = `<span class="icon">🏷</span>${task.tag}`;
-          pillRow.appendChild(tagPill);
-        }
-
-        const body = document.createElement("div");
-        body.className = "task-body";
-        body.textContent = task.description;
-        if (compactView) body.style.display = "none";
-
-        const footer = document.createElement("div");
-        footer.className = "task-footer";
-        footer.innerHTML = `<span class="tag">${task.section.toUpperCase()}</span>
-          <span class="badge-soft">${
-            completed[task.id] ? "Marked as done" : "Tap to mark done"
-          }</span>`;
-
-        card.appendChild(header);
-        card.appendChild(pillRow);
-        card.appendChild(body);
-        card.appendChild(footer);
-
-        // click handling
-        card.addEventListener("click", (event) => {
-          // If user clicks inside checkbox or anywhere on card, toggle checked.
-          toggleTask(task.id, card);
-        });
-
-        taskGrid.appendChild(card);
-      });
-    }
-
-    function toggleTask(id, card) {
-      const checkbox = card.querySelector(".task-checkbox");
-      const footerBadge = card.querySelector(".badge-soft");
-
-      const currentlyDone = !!completed[id];
-      completed[id] = !currentlyDone;
-      if (!completed[id]) {
-        delete completed[id];
-      }
-
-      checkbox.classList.toggle("checked", !!completed[id]);
-      footerBadge.textContent = completed[id]
-        ? "Marked as done"
-        : "Tap to mark done";
-
-      saveCompleted();
+      const container = document.getElementById('taskList');
+      const filtered = tasks.filter(t => state.filter === 'all' || t.sec === state.filter);
+      
+      container.innerHTML = filtered.map(t => {
+        const isDone = !!state.completed[t.id];
+        return `
+        <div class="task-card ${state.viewMode} ${isDone ? 'done' : ''}" 
+             data-sec="${t.sec}" onclick="toggleTask('${t.id}')">
+          <div class="check-circle">${getIcon('check')}</div>
+          <div class="card-content">
+            <div class="card-header">
+              <div class="card-title">${t.title}</div>
+              <div class="time-badge">${t.time}</div>
+            </div>
+            <div class="card-desc">${t.desc}</div>
+            <div class="card-tags">
+              <span class="tag">${t.tag}</span>
+            </div>
+          </div>
+        </div>`;
+      }).join('');
+      
       updateProgress();
-      maybeCelebrate();
     }
 
-    function updateProgress() {
-      const filtered = tasks.filter(
-        (t) => activeSection === "all" || t.section === activeSection
-      );
-      const done = filtered.filter((t) => completed[t.id]).length;
-      const total = filtered.length || 1;
-      const percent = Math.round((done / total) * 100);
-      progressBar.style.width = percent + "%";
-      progressCount.textContent = `${done} / ${total}`;
-    }
+    window.setFilter = (filterId) => {
+      state.filter = filterId;
+      renderFilters();
+      renderTasks();
+      window.scrollTo({top: 0, behavior: 'smooth'});
+    };
 
-    function maybeCelebrate() {
-      // Simple little celebration when all tasks in current section are done.
-      const filtered = tasks.filter(
-        (t) => activeSection === "all" || t.section === activeSection
-      );
-      if (!filtered.length) return;
-      const allDone = filtered.every((t) => completed[t.id]);
-      if (allDone) {
-        const sectionName =
-          activeSection === "all"
-            ? "all sections"
-            : activeSection.charAt(0).toUpperCase() + activeSection.slice(1);
-        alert(`Great work – you've ticked every task in ${sectionName}! 🎉`);
+    window.setView = (mode) => {
+      state.viewMode = mode;
+      localStorage.setItem('ward_view_mode', mode);
+      document.getElementById('viewToggle').dataset.state = mode;
+      renderTasks();
+    };
+
+    window.toggleTask = (id) => {
+      if (state.completed[id]) delete state.completed[id];
+      else state.completed[id] = true;
+      localStorage.setItem('ward_tasks_clean_v3', JSON.stringify(state.completed));
+      renderTasks();
+    };
+
+    window.updateUI = () => {
+      document.getElementById('viewToggle').dataset.state = state.viewMode;
+    };
+
+    window.updateProgress = () => {
+      const total = tasks.length;
+      const done = Object.keys(state.completed).length;
+      const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+      document.getElementById('progCount').innerText = `${done}/${total}`;
+      document.getElementById('progFill').style.width = pct + '%';
+    };
+
+    window.resetApp = () => {
+      if (confirm('Start fresh? This will clear all ticks.')) {
+        state.completed = {};
+        localStorage.setItem('ward_tasks_clean_v3', '{}');
+        renderTasks();
       }
-    }
+    };
 
-    function saveCompleted() {
-      try {
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(completed));
-      } catch (e) {
-        // ignore storage errors
-      }
-    }
-
-    function loadCompleted() {
-      try {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        return raw ? JSON.parse(raw) : {};
-      } catch (e) {
-        return {};
-      }
-    }
-
-    function pickRandomPrompt() {
-      const idx = Math.floor(Math.random() * funPrompts.length);
-      const prompt = funPrompts[idx];
-      funPromptTitle.textContent = prompt.title;
-      funPromptText.textContent = prompt.text;
-    }
+    init();
   </script>
 </body>
 </html>
