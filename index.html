@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Ward Housekeeper – Task List</title>
+  <title>Ward Housekeeper Guide</title>
   <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no" />
   <style>
     :root {
@@ -26,6 +26,11 @@
       --bg-on: #f1f5f9;
       --accent-wk: #ec4899;     /* Pink */
       --bg-wk: #fdf2f8;
+      
+      /* Saffron Guide Accents */
+      --saffron-bg: #fff7ed;
+      --saffron-border: #fdba74;
+      --saffron-text: #9a3412;
 
       /* UI Variables */
       --radius: 16px;
@@ -40,7 +45,7 @@
       color: var(--text-main);
       margin: 0;
       padding: 0;
-      padding-bottom: 40px;
+      padding-bottom: 40px; /* Reduced bottom padding since floater is gone */
     }
 
     /* --- LAYOUT & HEADER --- */
@@ -48,10 +53,11 @@
       max-width: 600px; 
       margin: 0 auto;
       padding: 16px;
+      overflow-x: hidden; 
     }
 
     header {
-      margin-bottom: 12px;
+      margin-bottom: 20px;
       display: flex;
       flex-direction: column;
       gap: 12px;
@@ -60,8 +66,7 @@
     .top-bar {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 12px;
+      align-items: flex-start;
     }
 
     h1 {
@@ -78,7 +83,52 @@
       margin-top: 2px;
     }
 
-    /* --- CONTROLS (View Toggle) --- */
+    /* --- TOP PROGRESS BAR (New Subtle Design) --- */
+    .header-progress {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 4px;
+      padding-bottom: 4px;
+    }
+
+    .progress-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text-muted);
+    }
+
+    .btn-text-reset {
+      background: none;
+      border: none;
+      color: var(--text-muted);
+      font-size: 0.75rem;
+      text-decoration: underline;
+      cursor: pointer;
+      padding: 4px 0;
+    }
+    .btn-text-reset:active { color: var(--text-main); }
+
+    .progress-track {
+      width: 100%;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 100px;
+      overflow: hidden;
+    }
+
+    .progress-fill {
+      height: 100%;
+      background: var(--primary);
+      width: 0%;
+      transition: width 0.3s ease;
+      border-radius: 100px;
+    }
+
+    /* --- CONTROLS --- */
     .view-toggle {
       background: #e2e8f0;
       border-radius: 100px;
@@ -86,7 +136,7 @@
       display: flex;
       position: relative;
       width: fit-content;
-      flex-shrink: 0;
+      margin-top: 8px;
     }
 
     .view-btn {
@@ -118,90 +168,37 @@
     .view-toggle[data-state="compact"] .toggle-slider { transform: translateX(0); width: 85px; }
     .view-toggle[data-state="detailed"] .toggle-slider { transform: translateX(85px); width: 85px; }
 
-    /* --- TOP PROGRESS BAR (SUBTLE) --- */
-    .progress-bar-container {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      margin-bottom: 10px;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(15, 23, 42, 0.02);
-      border: 1px solid rgba(148, 163, 184, 0.25);
-    }
-
-    .progress-label {
-      display: flex;
-      align-items: baseline;
-      gap: 4px;
-      font-size: 0.78rem;
-      color: var(--text-muted);
-      white-space: nowrap;
-    }
-
-    .prog-text {
-      font-weight: 600;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      font-size: 0.7rem;
-    }
-
-    .prog-count {
-      font-weight: 600;
-      color: var(--text-main);
-    }
-
-    .progress-bar-track {
-      position: relative;
-      flex: 1;
-      height: 4px;
-      border-radius: 999px;
-      background: #e2e8f0;
-      overflow: hidden;
-    }
-
-    .prog-bar-fill {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: 0%;
-      background: var(--primary);
-      transition: width 0.3s ease;
-    }
-
-    .progress-reset-btn {
+    /* Special Guide Button (Header) */
+    .guide-btn {
+      background: #ea580c; /* Orange for distinction */
+      color: white;
       border: none;
-      background: transparent;
-      padding: 4px;
-      border-radius: 999px;
-      cursor: pointer;
+      padding: 12px 16px;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      font-weight: 700;
       display: flex;
       align-items: center;
       justify-content: center;
-      color: var(--text-muted);
-      flex-shrink: 0;
+      gap: 10px;
+      cursor: pointer;
+      box-shadow: 0 4px 10px rgba(234, 88, 12, 0.2);
+      transition: transform 0.2s;
+      width: 100%;
+      margin-top: 10px;
     }
+    .guide-btn:active { transform: scale(0.97); }
+    .guide-btn svg { width: 20px; height: 20px; stroke-width: 2.5; }
 
-    .progress-reset-btn:hover {
-      background: rgba(148, 163, 184, 0.16);
-      color: var(--text-main);
-    }
-
-    .progress-reset-btn svg {
-      width: 16px;
-      height: 16px;
-    }
-
-    /* --- FILTERS (Horizontal Scroll) --- */
+    /* --- FILTERS --- */
     .filters-wrapper {
       position: sticky;
       top: 0;
-      z-index: 50;
-      background: rgba(248, 250, 252, 0.96);
+      z-index: 40;
+      background: rgba(248, 250, 252, 0.95);
       backdrop-filter: blur(8px);
-      margin: 0 -16px;
-      padding: 10px 0;
+      margin: 0 -16px; 
+      padding: 10px 0; 
       border-bottom: 1px solid rgba(0,0,0,0.05);
     }
 
@@ -209,7 +206,7 @@
       display: flex;
       gap: 10px;
       overflow-x: auto;
-      padding: 0 16px 8px 16px;
+      padding: 0 16px 8px 16px; 
       scrollbar-width: none;
     }
     .filter-scroll::-webkit-scrollbar { display: none; }
@@ -222,14 +219,14 @@
       font-size: 0.85rem;
       font-weight: 600;
       color: var(--text-muted);
-      white-space: nowrap;
+      white-space: nowrap; 
       display: flex;
       align-items: center;
       gap: 6px;
       cursor: pointer;
       transition: all 0.2s;
       box-shadow: 0 1px 2px rgba(0,0,0,0.03);
-      flex-shrink: 0;
+      flex-shrink: 0; 
     }
 
     .filter-btn svg { width: 16px; height: 16px; }
@@ -297,7 +294,6 @@
       justify-content: space-between;
       align-items: flex-start;
       margin-bottom: 4px;
-      gap: 10px;
     }
 
     .card-title {
@@ -321,13 +317,11 @@
       padding: 4px 8px;
       border-radius: 6px;
       white-space: nowrap;
-      flex-shrink: 0;
     }
 
     .task-card.compact .card-desc,
-    .task-card.compact .card-tags {
-      display: none;
-    }
+    .task-card.compact .card-tags,
+    .task-card.compact .btn-card-action { display: none; }
     
     .card-desc {
       font-size: 0.9rem;
@@ -360,6 +354,149 @@
     .task-card[data-sec="ongoing"] .tag { background: var(--bg-on); color: var(--accent-on); }
     .task-card[data-sec="weekly"] .tag { background: var(--bg-wk); color: var(--accent-wk); }
 
+    /* Special In-Card Button */
+    .btn-card-action {
+      background: #fff7ed; /* Light orange background */
+      border: 1px solid #fdba74; /* Orange border */
+      color: #9a3412; /* Dark orange text */
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 100px;
+      margin-top: 8px;
+      margin-bottom: 12px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+    .btn-card-action:active { transform: scale(0.96); background: #ffedd5; }
+    .btn-card-action svg { width: 16px; height: 16px; stroke-width: 2.5; }
+
+    /* --- MODAL (GUIDE) --- */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.5);
+      z-index: 200;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.2s;
+      display: flex;
+      align-items: flex-end;
+    }
+    .modal-overlay.open { opacity: 1; pointer-events: auto; }
+
+    .modal-sheet {
+      background: white;
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      border-radius: 24px 24px 0 0;
+      padding: 24px;
+      transform: translateY(100%);
+      transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1);
+      max-height: 90vh;
+      overflow-y: auto;
+      scrollbar-width: none; 
+      -ms-overflow-style: none;
+    }
+    .modal-sheet::-webkit-scrollbar { display: none; }
+
+    .modal-overlay.open .modal-sheet { transform: translateY(0); }
+
+    .modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 16px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+    .modal-header h2 { margin: 0; font-size: 1.25rem; }
+    .btn-close { border: none; background: none; font-size: 1.5rem; color: #64748b; cursor: pointer; }
+
+    /* Accordion Styles */
+    .guide-step {
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      margin-bottom: 12px;
+      overflow: hidden;
+      background: #f8fafc;
+    }
+
+    .guide-step-header {
+      padding: 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      background: white;
+      transition: background 0.2s;
+    }
+    .guide-step-header:hover { background: #f1f5f9; }
+
+    .step-badge {
+      width: 28px;
+      height: 28px;
+      background: #ea580c;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.85rem;
+      font-weight: bold;
+      flex-shrink: 0;
+    }
+
+    .step-title { font-weight: 700; font-size: 1rem; color: #1e293b; flex: 1; }
+    
+    /* Subtle hint next to arrow */
+    .step-hint {
+      font-size: 0.75rem;
+      color: #94a3b8; /* Subtle slate */
+      font-weight: 600;
+      transition: opacity 0.2s;
+    }
+    .guide-step.open .step-hint { display: none; } /* Hide when open */
+
+    .step-chevron { color: #94a3b8; transition: transform 0.3s; }
+    .guide-step.open .step-chevron { transform: rotate(180deg); }
+
+    .guide-step-content { display: none; padding: 16px; border-top: 1px solid #e2e8f0; background: white; }
+    .guide-step.open .guide-step-content { display: block; }
+
+    .step-list { margin: 0; padding-left: 18px; color: #475569; font-size: 0.95rem; line-height: 1.6; }
+    .step-list li { margin-bottom: 12px; }
+    .step-list b { color: #0f172a; font-weight: 700; }
+
+    .step-note {
+      background: var(--saffron-bg);
+      border: 1px solid var(--saffron-border);
+      color: var(--saffron-text);
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      margin-top: 16px;
+      font-weight: 500;
+    }
+
+    .guide-images { margin-top: 16px; display: flex; flex-direction: column; gap: 12px; }
+    .guide-img { border-radius: 8px; border: 1px solid #e2e8f0; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 8px; }
+    .guide-img.full { width: 100%; }
+    .guide-img.icon { width: auto; max-height: 50px; align-self: flex-start; }
+    .guide-img.medium { width: 75%; align-self: center; }
+
+    /* Static Text Guide */
+    .static-guide h3 { font-size: 1.1rem; color: var(--primary-dark); margin-top: 16px; margin-bottom: 8px; font-weight: 700; }
+    .static-guide h3:first-child { margin-top: 0; }
+    .static-guide ul { margin: 0; padding-left: 20px; color: #475569; line-height: 1.6; }
+    .static-guide li { margin-bottom: 6px; }
+    .static-guide strong { color: #0f172a; }
+
   </style>
 </head>
 <body>
@@ -369,8 +506,8 @@
     <header>
       <div class="top-bar">
         <div>
-          <h1>Ward Housekeeper – Task List</h1>
-          <div class="subtitle">Daily schedule, ongoing and weekly tasks</div>
+          <h1>Task Guide</h1>
+          <div class="subtitle">Ward Housekeeper</div>
         </div>
         
         <div class="view-toggle" id="viewToggle" data-state="detailed">
@@ -379,33 +516,52 @@
           <button class="view-btn" onclick="setView('detailed')">Detailed</button>
         </div>
       </div>
+
+      <div class="header-progress">
+        <div class="progress-meta">
+          <span id="progCount">Progress 0/0</span>
+          <button class="btn-text-reset" onclick="resetApp()">Reset</button>
+        </div>
+        <div class="progress-track">
+          <div class="progress-fill" id="progFill"></div>
+        </div>
+      </div>
+
+      <button class="guide-btn" onclick="showGuide('saffron')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round"><rect x="4" y="2" width="16" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg>
+        Saffron Meal Ordering App Guide
+      </button>
+
     </header>
 
-    <div class="progress-bar-container">
-      <div class="progress-label">
-        <span class="prog-text">PROGRESS</span>
-        <span class="prog-count" id="progCount">0/0</span>
-      </div>
-      <div class="progress-bar-track">
-        <div class="prog-bar-fill" id="progFill"></div>
-      </div>
-      <button class="progress-reset-btn" onclick="resetApp()" aria-label="Reset progress">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/>
-          <path d="M3 3v5h5"/>
-        </svg>
-      </button>
-    </div>
-
     <div class="filters-wrapper">
-      <div class="filter-scroll" id="filterContainer"></div>
+      <div class="filter-scroll" id="filterContainer">
+        </div>
     </div>
 
-    <div class="task-list" id="taskList"></div>
+    <div class="task-list" id="taskList">
+      </div>
 
   </div>
 
+  <div class="modal-overlay" id="guideModal" onclick="closeModal()">
+    <div class="modal-sheet" onclick="event.stopPropagation()">
+      <div class="modal-header">
+        <h2 id="modalTitle">Guide</h2>
+        <button class="btn-close" onclick="closeModal()">&times;</button>
+      </div>
+      
+      <div id="modalContent">
+        </div>
+      
+      <div style="text-align: center; margin-top: 20px;">
+        <button onclick="closeModal()" style="width:100%; padding:14px; background:#f1f5f9; border:none; border-radius:12px; font-weight:600; color:#475569;">Close Guide</button>
+      </div>
+    </div>
+  </div>
+
   <script>
+    // --- ICONS (SVG) ---
     const ICONS = {
       all: '<path d="M8 6h13M8 12h13M8 18h13M3 6h.01M3 12h.01M3 18h.01" />',
       morning: '<path d="M12 2v2M12 20v2M4.93 4.93l1.41 1.41M17.66 17.66l1.41 1.41M2 12h2M20 12h2M6.34 17.66l-1.41 1.41M19.07 4.93l-1.41 1.41"/><circle cx="12" cy="12" r="4"/>',
@@ -413,262 +569,206 @@
       evening: '<path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/>',
       ongoing: '<path d="M21.5 2v6h-6M21.34 5.5A10 10 0 1 1 11.26 2.75"/>',
       weekly: '<rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/>',
-      check: '<polyline points="20 6 9 17 4 12"/>'
+      check: '<polyline points="20 6 9 17 4 12"/>',
+      chevron: '<polyline points="6 9 12 15 18 9"/>',
+      clipboard: '<path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/><path d="M9 14h6"/><path d="M9 18h6"/><path d="M9 10h6"/>'
     };
 
     function getIcon(name) {
       return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">${ICONS[name] || ICONS.all}</svg>`;
     }
 
+    // --- DATA ---
     const tasks = [
-      // MORNING
-      {
-        id: "m1",
-        sec: "morning",
-        title: "Serve Breakfast",
-        time: "07:00–09:00",
-        desc: "Serve breakfast trays to patients, assisting as needed and ensuring all patients are offered their meal.",
-        tag: "Meals"
-      },
-      {
-        id: "m2",
-        sec: "morning",
-        title: "Fridge & Freezer Temperatures",
-        time: "Morning & afternoon",
-        desc: "Check and record fridge and freezer temperatures twice daily. Fridges must be below 5°C and freezers below −18°C; escalate any out-of-range readings.",
-        tag: "Food safety"
-      },
-      {
-        id: "m3",
-        sec: "morning",
-        title: "Menus for Bed Moves & Admissions",
-        time: "By 09:30 & 13:30",
-        desc: "Check menus on the tablet for bed moves and new admissions. Ensure menus are completed and uploaded before 09:30 a.m. for lunch and 1:30 p.m. for supper.",
-        tag: "Menus"
-      },
-      {
-        id: "m4",
-        sec: "morning",
-        title: "Stock Checks & Helpdesk Orders",
-        time: "09:00 & 14:00",
-        desc: "Check bread, milk, juices and other staples. Order bread by 09:00 and milk by 14:00 via the helpdesk (5555) for orders or cancellations.",
-        tag: "Ordering"
-      },
-      {
-        id: "m5",
-        sec: "morning",
-        title: "Collect Breakfast Dishes & Wash Up",
-        time: "Post-breakfast",
-        desc: "Collect all breakfast dishes, clear tables and load the dishwasher so equipment is washed and ready for the next meal service.",
-        tag: "Hygiene"
-      },
-      {
-        id: "m6",
-        sec: "morning",
-        title: "Rotate Food & Supplements (Fridge)",
-        time: "Morning",
-        desc: "Check expiry dates on patient food and nutritional supplements in the fridge. Rotate stock using FIFO (First In, First Out) and remove any out-of-date items.",
-        tag: "Stock rotation"
-      },
-      {
-        id: "m7",
-        sec: "morning",
-        title: "Clean Pantry Appliances & Storage",
-        time: "Morning",
-        desc: "Clean inside cupboards, the microwave, fridges and the freezer, keeping the ward pantry clean and compliant with food safety guidance.",
-        tag: "Cleaning"
-      },
-      {
-        id: "m8",
-        sec: "morning",
-        title: "Restock Tea & Breakfast Trolley",
-        time: "Morning",
-        desc: "Restock the tea and breakfast trolley with drinks, crockery and consumables so it is ready for use.",
-        tag: "Restock"
-      },
-      {
-        id: "m9",
-        sec: "morning",
-        title: "Morning Tea Round",
-        time: "10:30",
-        desc: "Complete the 10:30 a.m. tea round, offering hot drinks and refreshments to patients.",
-        tag: "Drinks"
-      },
-      {
-        id: "m10",
-        sec: "morning",
-        title: "Restock Nurse & IV Stations",
-        time: "Morning",
-        desc: "Restock nurse station and IV station with required items and check sharps bins, replacing them if they are approaching the fill line.",
-        tag: "Stations & sharps"
-      },
-      {
-        id: "m11",
-        sec: "morning",
-        title: "Start Visiting Patients for Next-Day Menus",
-        time: "Morning",
-        desc: "Begin visiting each patient to record their lunch and supper choices for the following day on the tablet, making sure that all dietary requirements for each patient are observed throughout the menus.",
-        tag: "Menus"
-      },
+      { id: "m1", sec: "morning", title: "Serve Breakfast", time: "07:00–09:00", desc: "Serve breakfast to patients (approx. 07:00-09:00 a.m.).", tag: "Meals", hasGuide: true },
+      { id: "m2", sec: "morning", title: "Fridge & Freezer Temps", time: "Twice Daily", desc: "Check and record fridges and freezer temperature twice daily (Fridge must be below 5°C / Freezer below -18°C).", tag: "Food Safety" },
+      { id: "m3", sec: "morning", title: "Menu Checks", time: "09:30 / 13:30", desc: "Check menus for bed changes and new admissions. Ensure menus are completed and uploaded before 09:30 a.m. for Lunch and 1:30 p.m. for supper.", tag: "Admin" },
+      { id: "m4", sec: "morning", title: "Bread & Milk Stock", time: "09:00 / 14:00", desc: "Check stock levels of bread, milk, juices, and other items. Call the Helpdesk on 5555 to order or cancel items as needed. (Bread until 9:00am / Milk until 2pm).", tag: "Ordering" },
+      { id: "m5", sec: "morning", title: "Wash Breakfast Dishes", time: "Post-Breakfast", desc: "Collect all breakfast dishes and complete the washing up.", tag: "Hygiene" },
+      { id: "m6", sec: "morning", title: "Rotate Food & Supplements", time: "AM", desc: "Rotate patient food in the fridge and check nutritional supplements for expiry; rotate stock using FIFO.", tag: "Stock" },
+      { id: "m7", sec: "morning", title: "Clean Kitchen Interiors", time: "AM", desc: "Clean the inside of cupboards, microwave, fridges, and freezer.", tag: "Cleaning" },
+      { id: "m8", sec: "morning", title: "Restock Trolley", time: "AM", desc: "Restock the tea/breakfast trolley.", tag: "Stock" },
+      { id: "m9", sec: "morning", title: "Morning Tea Round", time: "10:30", desc: "Complete the tea round at 10:30 a.m.", tag: "Drinks" },
+      { id: "m10", sec: "morning", title: "Nurse/IV Station", time: "AM", desc: "Restock the nurse station and IV station with required items. Check and replace sharps bins, if needed.", tag: "Stock" },
+      
+      { id: "d1", sec: "midday", title: "Prepare Lunch Trays", time: "Before 12:30", desc: "Prepare the trays for lunch service.", tag: "Prep" },
+      { id: "d2", sec: "midday", title: "Serve Lunch", time: "12:30", desc: "Assist with serving lunch at 12:30 p.m.", tag: "Meals" },
+      { id: "d3", sec: "midday", title: "Collect Lunch Trays", time: "Post-Lunch", desc: "Collect lunch trays and send them back to the kitchen for washing.", tag: "Hygiene" },
+      { id: "d4", sec: "midday", title: "Afternoon Tea Round", time: "PM", desc: "Carry out the afternoon tea round afterwards.", tag: "Drinks" },
+      { id: "d5", sec: "midday", title: "Restock PPE & Wipes", time: "PM", desc: "Restock PPE and consumables as required, including gloves, aprons, masks, and ensuring Clinell wipes are fully stocked.", tag: "Stock" },
+      { id: "d6", sec: "midday", title: "Ariba Orders", time: "As Required", desc: "Check whether any orders are needed from Ariba (bowls, cutlery, small plates, paper roll, Heinz soups, sugar, blue cups, or other supplies) and place orders as required.", tag: "Ordering" },
+      { id: "d7", sec: "midday", title: "Next Day Menus", time: "By 13:30", desc: "Ensure all lunch and supper menus for the following day are completed by visiting each patient, reviewing the available options, and recording their meal choices on the tablet.", tag: "Admin" },
 
-      // MIDDAY
-      {
-        id: "d1",
-        sec: "midday",
-        title: "Prepare Trays for Lunch",
-        time: "Before 12:30",
-        desc: "Prepare trays and set up for the lunch service so that meals can be delivered promptly and safely.",
-        tag: "Prep"
-      },
-      {
-        id: "d2",
-        sec: "midday",
-        title: "Assist with Lunch Service",
-        time: "12:30",
-        desc: "Assist with serving lunch at 12:30 p.m., ensuring patients receive the correct meals and any assistance required.",
-        tag: "Meals"
-      },
-      {
-        id: "d3",
-        sec: "midday",
-        title: "Collect Lunch Trays",
-        time: "Post-lunch",
-        desc: "Collect all lunch trays after the meal and send them back to the kitchen for washing, leaving bedside tables clean and clear.",
-        tag: "Hygiene"
-      },
-      {
-        id: "d4",
-        sec: "midday",
-        title: "Afternoon Tea Round",
-        time: "Afternoon",
-        desc: "Carry out the afternoon tea round, offering hot drinks and refreshments to patients.",
-        tag: "Drinks"
-      },
-      {
-        id: "d5",
-        sec: "midday",
-        title: "Restock PPE & Clinell Wipes",
-        time: "Afternoon",
-        desc: "Restock PPE and consumables as required, including gloves, aprons and masks in all rooms, and ensure Clinell wipes are fully stocked throughout the ward.",
-        tag: "PPE & wipes"
-      },
-      {
-        id: "d6",
-        sec: "midday",
-        title: "Ariba Ordering (Supplies)",
-        time: "As required",
-        desc: "Check if any orders are needed from Ariba when stock is low (e.g. bowls, cutlery, small plates, paper roll, Heinz soups, sugar, blue cups and other supplies) and place orders as required.",
-        tag: "Ordering"
-      },
-      {
-        id: "d7",
-        sec: "midday",
-        title: "Same-Day Supper Menus on Tablet",
-        time: "By 13:30",
-        desc: "Ensure that all patients have their supper choices for the same day recorded on the tablet. Confirm that all supper menus are completed and uploaded by 1:30 p.m.",
-        tag: "Menus"
-      },
+      { id: "e1", sec: "evening", title: "Supper Service", time: "17:30", desc: "Assist with supper service at 5:30 p.m. by delivering trays provided by Catering.", tag: "Meals" },
+      { id: "e2", sec: "evening", title: "Collect Supper Trays", time: "Post-Supper", desc: "Collect all supper trays afterwards.", tag: "Hygiene" },
+      { id: "e3", sec: "evening", title: "Late Tea Round", time: "Evening", desc: "Complete the late tea round.", tag: "Drinks" },
+      { id: "e4", sec: "evening", title: "Prep Trolleys", time: "End Shift", desc: "Prepare the tea trolley and breakfast trolley for the next morning, ensuring everything is clean, stocked, and ready for use.", tag: "Prep" },
 
-      // EVENING
-      {
-        id: "e1",
-        sec: "evening",
-        title: "Assist with Supper Service",
-        time: "17:30",
-        desc: "Assist with the supper service at 5:30 p.m. by delivering trays provided by Catering and ensuring patients receive the correct meals.",
-        tag: "Meals"
-      },
-      {
-        id: "e2",
-        sec: "evening",
-        title: "Collect Supper Trays",
-        time: "Post-supper",
-        desc: "Collect all supper trays after the meal, send them back for washing and clear bedside tables.",
-        tag: "Hygiene"
-      },
-      {
-        id: "e3",
-        sec: "evening",
-        title: "Late Tea Round",
-        time: "Evening",
-        desc: "Complete the late tea round, offering drinks and refreshments to patients in the evening.",
-        tag: "Drinks"
-      },
-      {
-        id: "e4",
-        sec: "evening",
-        title: "Prepare Trolleys for Next Morning",
-        time: "End of shift",
-        desc: "Clean and restock the tea trolley and breakfast trolley so they are fully prepared for the following morning.",
-        tag: "Prep"
-      },
+      { id: "o1", sec: "ongoing", title: "Drinks & Water", time: "All Day", desc: "Provide additional drinks on request and ensure fresh water is available throughout the day.", tag: "Care" },
+      { id: "o2", sec: "ongoing", title: "Pantry Cleanliness", time: "All Day", desc: "Maintain cleanliness of the ward pantry and ensure all opened items are correctly dated. Discard expired or undated/open food items in accordance with food safety guidance.", tag: "Safety" },
+      { id: "o3", sec: "ongoing", title: "Dishwasher Maint.", time: "Start/End", desc: "Drain and refill the dishwasher water at the start and end of the shift. Check detergent, sanitiser, and salt levels for the dishwasher; clean the filter daily.", tag: "Maint" },
 
-      // ONGOING
-      {
-        id: "o1",
-        sec: "ongoing",
-        title: "Drinks on Request",
-        time: "All day",
-        desc: "Provide additional drinks on request throughout the day, responding promptly to patient hydration needs.",
-        tag: "Hydration"
-      },
-      {
-        id: "o2",
-        sec: "ongoing",
-        title: "Fresh Water & Jugs",
-        time: "All day",
-        desc: "Ensure fresh drinking water and clean jugs are available throughout the ward, checking and replenishing regularly.",
-        tag: "Hydration"
-      },
-      {
-        id: "o3",
-        sec: "ongoing",
-        title: "Pantry Cleanliness & Food Dating",
-        time: "All day",
-        desc: "Maintain cleanliness of the ward pantry. Ensure all opened items are correctly dated and discard any expired, undated or open food in line with food safety guidance.",
-        tag: "Food safety"
-      },
-      {
-        id: "o4",
-        sec: "ongoing",
-        title: "Stock Rotation & Expiry Checks",
-        time: "All day",
-        desc: "Check expiry dates and rotate all ward food items and nutritional supplements using FIFO (First In, First Out), removing anything out of date.",
-        tag: "Stock rotation"
-      },
-      {
-        id: "o5",
-        sec: "ongoing",
-        title: "Dishwasher Maintenance",
-        time: "Start & end of shift",
-        desc: "At the start and end of the shift drain and refill the dishwasher water. Check detergent, sanitiser and salt levels and clean the filter daily.",
-        tag: "Equipment"
-      },
+      { id: "w1", sec: "weekly", title: "Mobile Equipment", time: "Weekly", desc: "Clean mobile equipment weekly (drip stands, mobile computers, phones, drip trolleys, folder trolleys).", tag: "Cleaning" },
+      { id: "w2", sec: "weekly", title: "Patient Boards", time: "Weekly", desc: "Check and tidy patient info boards and leaflet holders weekly.", tag: "Tidy" },
+      { id: "w3", sec: "weekly", title: "Flush Taps", time: "Tue & Sat", desc: "Flush all ward taps twice weekly (Tuesdays and Saturdays), including patient room sinks, shower taps, and wall-mounted sinks. Record each flush in the housekeeper schedule folder.", tag: "Safety" },
+    ];
 
-      // WEEKLY
+    // --- BREAKFAST GUIDE CONTENT ---
+    const breakfastGuideContent = `
+      <div class="static-guide">
+        <h3>1. Start the Preparation</h3>
+        <ul>
+          <li><strong>Take out butter portions:</strong> One breakfast bowl filled with portions is usually enough.</li>
+          <li><strong>Warm the milk:</strong> Put ≈1800 ml of whole milk in the clear jug. Microwave for ≈12 minutes.</li>
+          <li>While the milk warms, continue with the next tasks.</li>
+        </ul>
+
+        <h3>2. While the Milk Warms</h3>
+        <ul>
+          <li><strong>Sync and download menus</strong> on the tablet (follow the Saffron app guide steps).</li>
+          <li><strong>Check the breakfast trolley</strong> is stocked with: Cereals, Marmalade & jam, Teabags, Coffee, Hot chocolate, Sugar.</li>
+          <li>Replace anything missing and tidy the kitchen briefly.</li>
+        </ul>
+
+        <h3>3. When Milk Is Nearly Ready</h3>
+        <ul>
+          <li><strong>Prepare the teapots:</strong> Add 5 teabags per teapot.</li>
+          <li><strong>Transfer milk:</strong> When heated, move it to the metal jug to keep it hot.</li>
+          <li><strong>Start toast:</strong> First batch: 10 white + 5 brown slices. Make more as needed.</li>
+        </ul>
+
+        <h3>4. Before Leaving the Kitchen</h3>
+        <ul>
+          <li>Gather: Milk, Juices, Yoghurts, and any other useful items.</li>
+        </ul>
+
+        <h3>5. Before Starting the Round</h3>
+        <ul>
+          <li><strong>Speak with the nurse in charge of the specific section</strong> you are serving.</li>
+          <li>Ask them to identify:</li>
+          <li>Special diets (soft, gluten-free, thickened fluids, etc.).</li>
+          <li>New admissions.</li>
+          <li>Patients who are nil-by-mouth (NBM) or on restricted fluids.</li>
+          <li><strong>Make a visible list</strong> so everyone helping knows the plan.</li>
+        </ul>
+      </div>
+    `;
+
+    // --- SAFFRON GUIDE STEPS ---
+    const saffronGuideSteps = [
       {
-        id: "w1",
-        sec: "weekly",
-        title: "Clean Mobile Equipment",
-        time: "Weekly",
-        desc: "Carry out weekly cleaning of mobile equipment including drip stands, mobile computers, phones, drip trolleys and folder trolleys.",
-        tag: "Weekly clean"
+        title: "Syncing Data (Start Here)", // Number removed from title
+        steps: [
+          "Ensure you are connected to WiFi.",
+          "Tap <b>SYNC</b> (green button, top right).",
+          "Tap <b>DOWNLOAD DATA AND DOCUMENTS</b> (orange button). Wait for all items to check green.",
+          "Tap <b>DOWNLOAD MEAL DATA</b> from the home screen. Wait for the 'Download is complete' message.",
+          "Tap <b>MEAL ORDERING ADMIN</b> > <b>SYNC MENU DATA</b>. Wait for 'In Progress' to finish."
+        ],
+        note: "Perform all 3 steps regularly. If you see a red 'X' instead of a green tick, check your WiFi.",
+        images: [
+          { src: "Screenshot 2025-12-09 at 08.34.22.png", size: "icon" },   // Login/App Icon
+          { src: "Screenshot 2025-12-09 at 08.35.38.png", size: "icon" },   // Green Sync Button
+          { src: "Screenshot 2025-12-09 at 08.34.52.png", size: "medium" }, // Download Data button
+          { src: "Screenshot 2025-12-09 at 08.35.53.png", size: "full" },   // Progress list
+          { src: "Screenshot 2025-12-09 at 08.36.07.png", size: "medium" }, // Arrow to Meal Data
+          { src: "Screenshot 2025-12-09 at 08.36.21.png", size: "medium" }, // Download Complete
+          { src: "Screenshot 2025-12-09 at 08.36.33.png", size: "medium" }, // Arrow to Admin
+          { src: "Screenshot 2025-12-09 at 08.36.49.png", size: "medium" }, // Sync Menu Data button
+          { src: "Screenshot 2025-12-09 at 08.37.04.png", size: "medium" }  // In Progress
+        ]
       },
       {
-        id: "w2",
-        sec: "weekly",
-        title: "Patient Boards & Leaflet Holders",
-        time: "Weekly",
-        desc: "Check and tidy patient information boards and leaflet holders weekly, removing outdated materials and tidying or restocking as needed.",
-        tag: "Information"
+        title: "Selecting Menu & Ward",
+        steps: [
+          "Tap <b>MEAL ORDERING</b> on the Home Screen.",
+          "Check the top right for the correct Cycle (e.g. <b>ADULT MENU CYCLE</b>).",
+          "Select the <b>Date</b> and <b>Meal</b> (Lunch/Supper). Tap <b>CONTINUE</b>.",
+          "Select your <b>Ward</b> from the list (check the bed count at the bottom of the card). Tap <b>CONTINUE</b>."
+        ],
+        images: [
+          { src: "Screenshot 2025-12-09 at 08.37.38.png", size: "icon" },   // Meal Ordering Icon
+          { src: "Screenshot 2025-12-09 at 08.37.52.png", size: "medium" }, // Menu Cycle
+          { src: "Screenshot 2025-12-09 at 08.38.20.png", size: "full" },   // Date/Meal Select
+          { src: "Screenshot 2025-12-09 at 08.38.34.png", size: "icon" },   // Continue
+          { src: "Screenshot 2025-12-09 at 08.38.53.png", size: "full" }    // Ward List
+        ]
       },
       {
-        id: "w3",
-        sec: "weekly",
-        title: "Tap Flushing & Recording",
-        time: "Tue & Sat",
-        desc: "On Tuesdays and Saturdays flush all ward taps, including patient room sinks, shower taps and wall-mounted sinks, and record each flush in the housekeeper schedule folder.",
-        tag: "Water safety"
+        title: "Patient Details Form",
+        steps: [
+          "Select a <b>Bed</b> from the list.",
+          "<b>Present/Not Present:</b> Mark if the patient is available.",
+          "<b>Order Types:</b> Default is 'In Patients'. Change this for 'Nil By Mouth', 'Empty Bed', or 'Meal Not Required'.",
+          "<b>Red Tray:</b> Tap the flag if the patient needs assistance.",
+          "<b>Restrictions:</b> Tap 'Edit' to add allergens (e.g. Nuts Free, Gluten Free).",
+          "<b>Portion Size:</b> Adjust if necessary (Standard is default)."
+        ],
+        images: [
+          { src: "Screenshot 2025-12-09 at 08.39.07.png", size: "full" }, // Bed List
+          { src: "Screenshot 2025-12-09 at 08.39.54.png", size: "full" }, // Main Form
+          { src: "Screenshot 2025-12-09 at 08.40.06.png", size: "full" }, // Order Types
+          { src: "Screenshot 2025-12-09 at 08.40.25.png", size: "full" }, // Restrictions
+          { src: "Screenshot 2025-12-09 at 08.40.37.png", size: "full" }  // Portion Size
+        ]
+      },
+      {
+        title: "Taking the Order",
+        steps: [
+          "<b>Select Food:</b> Tap the course buttons (Soups, Mains, Sides, Desserts).",
+          "Tap the specific item to select it (it will turn purple).",
+          "<b>Limits:</b> Some courses have a maximum limit (e.g. 'Select one dish').",
+          "Check the counters on the right side of the course buttons.",
+          "Tap <b>REVIEW/COMPLETE</b> when finished."
+        ],
+        images: [
+          { src: "Screenshot 2025-12-09 at 08.41.10.png", size: "full" },   // Menu Item Header
+          { src: "Screenshot 2025-12-09 at 08.41.33.png", size: "full" },   // Soups
+          { src: "Screenshot 2025-12-09 at 08.41.42.png", size: "full" },   // Maximum Reached
+          { src: "Screenshot 2025-12-09 at 08.41.55.png", size: "medium" }, // Counters
+          { src: "Screenshot 2025-12-09 at 08.42.14.png", size: "icon" }    // Review button
+        ]
+      },
+      {
+        title: "Review, Comments & Completion",
+        steps: [
+          "Review the <b>Meal Card</b> summary screen with the patient.",
+          "<b>Comments:</b> Tap 'Comment' to add notes like 'Small portion' or 'No sauce'. Do not order off-menu items here.",
+          "Tap <b>COMPLETE</b> to finish. The bed will now show a green tick on the bed list."
+        ],
+        note: "Tip: Use the 'Hide Complete' toggle on the bed list to see only the patients left to order.",
+        images: [
+          { src: "Screenshot 2025-12-09 at 08.42.32.png", size: "full" },   // Meal Card Summary
+          { src: "Screenshot 2025-12-09 at 08.42.46.png", size: "full" },   // Comment
+          { src: "Screenshot 2025-12-09 at 08.43.13.png", size: "full" },   // Warning text
+          { src: "Screenshot 2025-12-09 at 08.43.42.png", size: "icon" },   // Bed Tick
+          { src: "Screenshot 2025-12-09 at 08.43.51.png", size: "medium" }  // Meal Tick
+        ]
+      },
+      {
+        title: "Editing or Deleting Orders",
+        steps: [
+          "To change an order, tap the bed again.",
+          "To remove a card completely (e.g. patient discharged), tap <b>DELETE</b> at the top left.",
+          "Confirm by tapping <b>OK</b>."
+        ],
+        images: [
+          { src: "Screenshot 2025-12-09 at 08.44.01.png", size: "medium" }, // Delete Button
+          { src: "Screenshot 2025-12-09 at 08.44.09.png", size: "medium" }  // Are you sure
+        ]
+      },
+      {
+        title: "Uploading Orders (Final Step)",
+        steps: [
+          "Return to the Home Screen (Tap Menu > Home).",
+          "Check the number on the <b>UPLOAD MEAL CARDS</b> button matches your bed count.",
+          "Tap <b>UPLOAD MEAL CARDS</b> to send all data to the kitchen."
+        ],
+        images: [
+          { src: "Screenshot 2025-12-09 at 08.44.24.png", size: "medium" }, // Menu
+          { src: "Screenshot 2025-12-09 at 08.44.33.png", size: "icon" },   // Home
+          { src: "Screenshot 2025-12-09 at 08.44.44.png", size: "full" }    // Upload Button
+        ]
       }
     ];
 
@@ -681,12 +781,14 @@
       { id: 'weekly', label: 'Weekly', icon: 'weekly' }
     ];
 
+    // --- STATE ---
     let state = {
-      completed: JSON.parse(localStorage.getItem('ward_tasks_clean_v3') || '{}'),
+      completed: JSON.parse(localStorage.getItem('ward_tasks_clean_v4') || '{}'),
       viewMode: localStorage.getItem('ward_view_mode') || 'detailed',
       filter: 'all'
     };
 
+    // --- RENDERERS ---
     function init() {
       renderFilters();
       updateUI();
@@ -703,12 +805,44 @@
       `).join('');
     }
 
+    // New logic to handle distinct Guide Types
+    function renderSaffronGuide() {
+      return saffronGuideSteps.map((s, i) => `
+        <div class="guide-step"> <div class="guide-step-header" onclick="toggleGuideStep(this)">
+            <div class="step-badge">${i+1}</div>
+            <div class="step-title">${s.title}</div>
+            <div class="step-hint">Tap to view</div> <div class="step-chevron">${getIcon('chevron')}</div>
+          </div>
+          <div class="guide-step-content">
+            <ul class="step-list">
+              ${s.steps.map(step => `<li>${step}</li>`).join('')}
+            </ul>
+            ${s.note ? `<div class="step-note">${s.note}</div>` : ''}
+            
+            ${s.images && s.images.length > 0 ? `
+              <div class="guide-images">
+                ${s.images.map(img => `<img src="${img.src}" class="guide-img ${img.size}" alt="Step Screenshot" loading="lazy" />`).join('')}
+              </div>
+            ` : ''}
+          </div>
+        </div>
+      `).join('');
+    }
+
     function renderTasks() {
       const container = document.getElementById('taskList');
       const filtered = tasks.filter(t => state.filter === 'all' || t.sec === state.filter);
       
       container.innerHTML = filtered.map(t => {
         const isDone = !!state.completed[t.id];
+        
+        // Updated Button Logic: Cleaner design, new icon
+        const guideBtn = t.hasGuide 
+          ? `<button class="btn-card-action" onclick="event.stopPropagation(); showGuide('breakfast')">
+               ${getIcon('clipboard')} View Step-by-Step
+             </button>` 
+          : '';
+
         return `
         <div class="task-card ${state.viewMode} ${isDone ? 'done' : ''}" 
              data-sec="${t.sec}" onclick="toggleTask('${t.id}')">
@@ -718,17 +852,24 @@
               <div class="card-title">${t.title}</div>
               <div class="time-badge">${t.time}</div>
             </div>
+            
             <div class="card-desc">${t.desc}</div>
+            ${guideBtn}
+            
             <div class="card-tags">
-              <span class="tag">${t.tag}</span>
+              <span class="tag">
+                ${t.tag}
+              </span>
             </div>
           </div>
-        </div>`;
+        </div>
+        `;
       }).join('');
       
       updateProgress();
     }
 
+    // --- ACTIONS ---
     window.setFilter = (filterId) => {
       state.filter = filterId;
       renderFilters();
@@ -746,7 +887,7 @@
     window.toggleTask = (id) => {
       if (state.completed[id]) delete state.completed[id];
       else state.completed[id] = true;
-      localStorage.setItem('ward_tasks_clean_v3', JSON.stringify(state.completed));
+      localStorage.setItem('ward_tasks_clean_v4', JSON.stringify(state.completed));
       renderTasks();
     };
 
@@ -758,18 +899,49 @@
       const total = tasks.length;
       const done = Object.keys(state.completed).length;
       const pct = total === 0 ? 0 : Math.round((done / total) * 100);
-      document.getElementById('progCount').innerText = `${done}/${total}`;
+      
+      document.getElementById('progCount').innerText = `Progress ${done}/${total}`;
       document.getElementById('progFill').style.width = pct + '%';
     };
 
     window.resetApp = () => {
-      if (confirm('Start fresh? This will clear all ticks.')) {
+      if(confirm('Start fresh? This will clear all ticks.')) {
         state.completed = {};
-        localStorage.setItem('ward_tasks_clean_v3', '{}');
+        localStorage.setItem('ward_tasks_clean_v4', '{}');
         renderTasks();
       }
     };
 
+    // Modal Logic
+    window.showGuide = (type) => {
+      const modal = document.getElementById('guideModal');
+      const title = document.getElementById('modalTitle');
+      const content = document.getElementById('modalContent');
+
+      if (type === 'saffron') {
+        title.innerText = "Saffron Meal Ordering App Guide";
+        content.innerHTML = renderSaffronGuide();
+      } else if (type === 'breakfast') {
+        title.innerText = "Serving Breakfast";
+        content.innerHTML = breakfastGuideContent;
+      }
+
+      modal.classList.add('open');
+    };
+
+    window.closeModal = () => {
+      document.getElementById('guideModal').classList.remove('open');
+    };
+
+    window.toggleGuideStep = (header) => {
+      const step = header.parentElement;
+      document.querySelectorAll('.guide-step').forEach(s => {
+        if(s !== step) s.classList.remove('open');
+      });
+      step.classList.toggle('open');
+    };
+
+    // Start
     init();
   </script>
 </body>
